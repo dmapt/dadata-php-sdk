@@ -96,12 +96,12 @@ class Api {
      * Prepare and execute clean command. Parse result.
      * @param string $type
      * @param mixed $data
-     * @param string $resultAttr
+     * @param mixed $resultAttr
      * @param array $response
      * @return array|bool
      * @throws DaDataException
      */
-    protected function clean($type, $data, $resultAttr, &$response)
+    public function clean($type, $data, $resultAttr, &$response)
     {
         $keys = false;
         if (!is_array($data))
