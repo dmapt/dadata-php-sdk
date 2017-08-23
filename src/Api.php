@@ -97,19 +97,20 @@ class Api {
      * @param string $type
      * @param mixed $data
      * @param mixed $resultAttr
-     * @param array $response
+     * @param mixed $response
      * @return array|bool
      * @throws DaDataException
      */
-    public function clean($type, $data, $resultAttr, &$response)
+    public function clean($type, $data, $resultAttr, &$response = null)
     {
-        $keys = false;
-        if (!is_array($data))
+        $single = false;
+        if (!is_array($data)) {
             $data = array($data);
-        else {
-            $keys = array_keys($data);
-            $data = array_values($data);
+            $single = true;
         }
+
+        $keys = array_keys($data);
+        $data = array_values($data);
 
         $url = $this->url.'/clean/'.$type;
         $response = $this->request($url, $data);
@@ -120,17 +121,18 @@ class Api {
             foreach($keys as $key) {
                 $return[$key] = false;
                 if (is_callable($resultAttr))
-                    $return[$key] = call_user_func($resultAttr, $response);
+                    $return[$key] = call_user_func($resultAttr, $response[$i]);
                 elseif (isset($response[$i][$resultAttr]))
                     $return[$key] = $response[$i][$resultAttr];
+
+                if ($single)
+                    return $return[$key];
 
                 $i++;
             }
 
             return $return;
-        } else
-            if (isset($response[$resultAttr]))
-                return $response[$resultAttr];
+        }
 
         return false;
     }
@@ -138,79 +140,100 @@ class Api {
     /**
      * Clean name.
      * @param string|mixed $data
+     * @param mixed $field
      * @param array $response
      * @return string|bool
      * @throws DaDataException
      */
-    public function cleanName($data, &$response = false)
+    public function cleanName($data, $field = 'result', &$response = false)
     {
-        return $this->clean('name', $data, 'result', $response);
+        return $this->clean('name', $data, $field, $response);
     }
 
     /**
      * Clean phone.
      * @param string|mixed $data
+     * @param mixed $field
      * @param array $response
      * @return string|bool
      * @throws DaDataException
      */
-    public function cleanPhone($data, &$response = false)
+    public function cleanPhone($data, $field = 'phone', &$response = false)
     {
-        return $this->clean('phone', $data, 'phone', $response);
+        return $this->clean('phone', $data, $field, $response);
     }
 
     /**
      * Clean passport.
      * @param string|mixed $data
+     * @param mixed $field
      * @param array $response
      * @return string|bool
      * @throws DaDataException
      */
-    public function cleanPassport($data, &$response = false)
+    public function cleanPassport($data, $field = null, &$response = false)
     {
-        /*return $this->clean('passport', $data, function($response) {
-            if (isset($response['series']) && isset($response['number']))
-                return $response['series'].' '.$response['number'];
+        if ($field === null)
+            $field = function($data) {
+                print_r($data);
+                if (isset($data['series']) && isset($data['number']))
+                    return $data['series'] . ' ' . $data['number'];
 
-            return false;
-        }, $response);*/
-        return $this->clean('passport', $data, 'series', $response);
+                return false;
+            };
+        return $this->clean('passport', $data, $field, $response);
     }
 
     /**
      * Clean email.
      * @param string|mixed $data
+     * @param mixed $field
      * @param array $response
      * @return string|bool
      * @throws DaDataException
      */
-    public function cleanEmail($data, &$response = false)
+    public function cleanEmail($data, $field = 'email', &$response = false)
     {
-        return $this->clean('email', $data, 'email', $response);
+        return $this->clean('email', $data, $field, $response);
     }
 
     /**
      * Clean birthdate.
      * @param string|mixed $data
+     * @param mixed $field
      * @param array $response
      * @return string|bool
      * @throws DaDataException
      */
-    public function cleanBirthdate($data, &$response = false)
+    public function cleanBirthdate($data, $field = 'birthdate', &$response = false)
     {
-        return $this->clean('birthdate', $data, 'birthdate', $response);
+        return $this->clean('birthdate', $data, $field, $response);
     }
 
     /**
      * Clean vehicle.
      * @param string|mixed $data
+     * @param mixed $field
      * @param array $response
      * @return string|bool
      * @throws DaDataException
      */
-    public function cleanVehicle($data, &$response = false)
+    public function cleanVehicle($data, $field = 'result', &$response = false)
     {
-        return $this->clean('vehicle', $data, 'vehicle', $response);
+        return $this->clean('vehicle', $data, $field, $response);
+    }
+
+    /**
+     * Clean address.
+     * @param string|mixed $data
+     * @param mixed $field
+     * @param array $response
+     * @return string|bool
+     * @throws DaDataException
+     */
+    public function cleanAddress($data, $field = 'result', &$response = false)
+    {
+        return $this->clean('address', $data, $field, $response);
     }
 
     /**
@@ -233,10 +256,5 @@ class Api {
         return $this->request($url, $data);
 
     }
-
-
-
-
-
 
 }

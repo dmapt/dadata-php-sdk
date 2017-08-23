@@ -25,9 +25,9 @@ $dirtyNames = [
 try {
 	$dadataApi = new dmapt\DaData\Api('YOUR API TOKEN', 'YOUR API SECRET');
 
-	$response = [];
+	$response = null;
 
-	$cleanNames = $dadataApi->cleanName($dirtyNames, $response);
+	$cleanNames = $dadataApi->cleanName($dirtyNames, 'result', $response);
 
 	var_dump($cleanNames);
 } catch (DaDataException $e) {
