@@ -4,7 +4,8 @@ dadata-sdk (unofficial)
 A PHP library for the DaData.ru REST API
 
 
-[API documentation](https://dadata.ru/api/clean/)
+[API documentation](https://dadata.ru/api/)
+
 
 ## Installation ##
 Update your composer.json file
@@ -26,10 +27,16 @@ try {
 	$dadataApi = new dmapt\DaData\Api('YOUR API TOKEN', 'YOUR API SECRET');
 
 	$response = null;
-
 	$cleanNames = $dadataApi->cleanName($dirtyNames, 'result', $response);
-
 	var_dump($cleanNames);
+	var_dump($response);
+	
+	var_dump($dadataApi->suggestParty('сбербанк'))
+	
+	var_dump($dadataApi->detectAddressByIp());
+	
+	
+	
 } catch (DaDataException $e) {
 	var_dump($e->getMessage());
 }
