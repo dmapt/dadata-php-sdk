@@ -472,6 +472,17 @@ class Api {
     }
 
     /**
+     * Find delivery company id by FIAS or KLADR
+     *
+     * @param string $query
+     * @return array
+     */
+    public function findDelivery($query)
+    {
+        return $this->suggestionsRequest('findById/delivery', $this->buildSuggestParams($query));
+    }
+
+    /**
      * Find organization by INN or OGRN
      *
      * @param string $query
